@@ -2,16 +2,16 @@ group 'cachet.plugins.health'
 version '1.2'
 
 buildscript {
-    // Check your main project's android/build.gradle for the latest compatible Kotlin version
-    ext.kotlin_version = '2.0.20' // Increased for better compatibility
+    // Use a compatible Kotlin version with Flutter 3.0+
+    ext.kotlin_version = '1.9.0' // Changed from 2.0.20 to stable 1.9.0
     repositories {
         google()
-        mavenCentral() // Use mavenCentral instead of jcenter() which is deprecated
+        mavenCentral()
     }
 
     dependencies {
-        // Use a more recent stable Gradle version compatible with modern Android SDKs
-        classpath 'com.android.tools.build:gradle:8.6.0' // Updated
+        // Use Gradle plugin compatible with your setup
+        classpath 'com.android.tools.build:gradle:8.1.0' // Changed from 8.6.0 to more stable version
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -27,17 +27,17 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    // Match the compilation SDK closer to the application's SDK 36 (using 35 here)
-    compileSdkVersion 35 
+    // Use compileSdk 33+ for better compatibility
+    compileSdkVersion 34
+    namespace 'cachet.plugins.health' // Add namespace for Android Gradle Plugin 8.0+
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        minSdkVersion 24 // Increased minimum SDK for modern Flutter/Android
+        minSdkVersion 21 // Keep at 21 for broader compatibility
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    // Ensure Java 11 compatibility if using Flutter 3.x+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -52,10 +52,15 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    // Updated Play Services versions
-    implementation("com.google.android.gms:play-services-fitness:21.1.0") 
-    implementation("com.google.android.gms:play-services-auth:20.7.0") 
     
-    // Add the V2 embedding dependency (essential for the V2 Kotlin code change)
-    implementation 'io.flutter:flutter_embedding_android:1.0.0-9b24748d61fa5b66d56d787034c59d188612140e' // This uses a placeholder version for the Flutter embedding, which is resolved by Gradle automatically
+    // Play Services dependencies - use versions compatible with each other
+    implementation 'com.google.android.gms:play-services-fitness:21.1.0'
+    implementation 'com.google.android.gms:play-services-auth:20.7.0'
+    
+    // Flutter embedding dependency - use the correct version
+    compileOnly 'io.flutter:flutter_embedding_v2:1.0.0-73f0f54598e74ee80aff6c2c65d3d4072c420a28'
+    
+    // Add AndroidX dependencies for better compatibility
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
 }
